@@ -27,6 +27,15 @@ Check out our [Getting Started guide](https://thingsboard.io/docs/getting-starte
 * Define thresholds and trigger alarms
 * Set up notifications via email, SMS, mobile apps, or integrate with third-party services.
 
+### 📖 Documentación Local (Español)
+
+Para configuración y deployment local:
+
+* **[Manual de Configuración](MANUAL_CONFIGURACION.md)** - Guía completa de configuración, microservicios, sensores y Docker
+* **[Guía de Credenciales](GUIA_CREDENCIALES.md)** - Autenticación, usuarios, tenants y Access Tokens
+* **[Resumen de Credenciales](CREDENCIALES_RESUMEN.md)** - Respuestas rápidas sobre credenciales
+* **[Script de Gestión](docker/manage_credentials.sh)** - Herramienta interactiva para gestionar credenciales
+
 ## ✨ Features
 
 <table>

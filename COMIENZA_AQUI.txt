@@ -1,0 +1,154 @@
+====
+    Copyright © 2016-2026 The Thingsboard Authors
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+====
+
+# Copyright © 2016-2026 The Thingsboard Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+#
+
+╔════════════════════════════════════════════════════════════════════════════╗
+║                                                                            ║
+║               🚀 SISTEMA IoT THINGSBOARD + ESP32 LISTO 🚀                 ║
+║                                                                            ║
+║                    ✅ 100% DE PREPARATIVOS COMPLETADOS ✅                 ║
+║                                                                            ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+📋 RESUMEN DE LO QUE SE PREPARÓ:
+════════════════════════════════════════════════════════════════════════════
+
+✅ 6 DOCUMENTOS COMPLETOS:
+   1. INICIO_AQUI.md                        (Guía rápida - 5 min)
+   2. PLAN_EJECUCION.md                     (Plan de 4 fases - 15 min)
+   3. GUIA_DEPLOYMENT_IOT_COMPLETO.md       (Detallado - 30 min)
+   4. RESUMEN_CONFIGURACION.md              (Referencia - 5 min)
+   5. README_RESUMEN.md                     (Resumen - 5 min)
+   6. INDICE_MAESTRO.md                     (Índice - 5 min)
+
+✅ 2 SCRIPTS EJECUTABLES:
+   1. docker/deploy-thingsboard-raspberry.sh    (Desploga TB automático)
+   2. docker/register-esp32.sh                  (Registra ESP32 automático)
+
+✅ 100% DOCUMENTADO:
+   - Arquitectura completa
+   - Configuración de Raspberry
+   - Código Arduino completo
+   - Integración getmarket-iot
+   - Troubleshooting avanzado
+
+════════════════════════════════════════════════════════════════════════════
+🎯 TUS PRÓXIMOS 3 PASOS:
+════════════════════════════════════════════════════════════════════════════
+
+PASO 1: LEE INSTRUCCIONES (5 minutos)
+─────────────────────────────────────
+   Abre: INICIO_AQUI.md
+
+PASO 2: DESPLEGA THINGSBOARD (30 minutos)
+─────────────────────────────────────────
+   cd docker && ./deploy-thingsboard-raspberry.sh
+
+PASO 3: REGISTRA ESP32 (5 minutos)
+──────────────────────────────────
+   ./register-esp32.sh
+
+════════════════════════════════════════════════════════════════════════════
+📊 ESTIMADO DE TIEMPO TOTAL: ~60 MINUTOS
+════════════════════════════════════════════════════════════════════════════
+
+   Compilar ThingsBoard   : 15 min
+   Desplegar Raspberry    : 10 min
+   Registrar ESP32        : 5 min
+   Cargar en ESP32        : 10 min
+   Verificar datos        : 5 min
+   Config getmarket-iot   : 10 min
+   Desplegar getmarket    : 5 min
+   ─────────────────────────────────
+   TOTAL                  : ~60 min
+
+════════════════════════════════════════════════════════════════════════════
+✅ INDICADORES DE ÉXITO:
+════════════════════════════════════════════════════════════════════════════
+
+   ✓ ThingsBoard accesible en http://192.168.4.177:8080
+   ✓ ESP32_IoT_Sensors aparece en Devices
+   ✓ Datos de sensores llegan en tiempo real
+   ✓ Temperature, humidity, soundLevel se actualizan
+   ✓ getmarket-iot responde en /health/thingsboard
+
+════════════════════════════════════════════════════════════════════════════
+🔑 CREDENCIALES POR DEFECTO:
+════════════════════════════════════════════════════════════════════════════
+
+   ThingsBoard:
+      Email:    sysadmin@thingsboard.org
+      Password: sysadmin
+
+   Raspberry SSH:
+      Usuario:  innvoid
+      Host:     192.168.4.177
+
+════════════════════════════════════════════════════════════════════════════
+❓ ¿NECESITAS AYUDA?
+════════════════════════════════════════════════════════════════════════════
+
+   Troubleshooting Rápido:
+      → Ver: RESUMEN_CONFIGURACION.md
+
+   Tutorial Completo:
+      → Ver: GUIA_DEPLOYMENT_IOT_COMPLETO.md
+
+   Entender Arquitectura:
+      → Ver: PLAN_EJECUCION.md
+
+   Buscar Algo Específico:
+      → Ver: INDICE_MAESTRO.md
+
+════════════════════════════════════════════════════════════════════════════
+🚀 EMPIEZA AHORA:
+════════════════════════════════════════════════════════════════════════════
+
+   PRIMERO: Abre este archivo con tu editor favorito
+   
+      INICIO_AQUI.md
+
+   LUEGO: Ejecuta en terminal
+   
+      cd /Users/pedrovalenzuela/Documents/Innvoid/Desarrollo/thingsboard
+      ./docker/deploy-thingsboard-raspberry.sh
+
+════════════════════════════════════════════════════════════════════════════
+📅 Preparado: Febrero 5, 2026
+✅ Estado: 100% Listo para desplegar
+⏰ Duración: ~60 minutos
+🎓 Documentación: 2,000+ líneas
+🔧 Scripts: Totalmente automatizado
+════════════════════════════════════════════════════════════════════════════
+
+                    ¡BUENA SUERTE! 🚀
+
+════════════════════════════════════════════════════════════════════════════

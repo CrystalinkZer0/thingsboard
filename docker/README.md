@@ -2,6 +2,17 @@
 
 This folder containing scripts and Docker Compose configurations to run ThingsBoard in Microservices mode.
 
+## 🆘 Troubleshooting Quick Links
+
+**¿Problemas al iniciar ThingsBoard?**
+- ⚠️ `The "JAVA_OPTS" variable is not set` warning
+- ❌ Contenedores restarting sin iniciar
+- ❌ ERROR: Cannot connect to database/cache
+
+👉 **Ver soluciones**: [../TROUBLESHOOTING_DOCKER_TB.md](../TROUBLESHOOTING_DOCKER_TB.md)
+
+---
+
 ## Prerequisites
 
 ThingsBoard Microservices are running in dockerized environment.

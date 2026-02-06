@@ -96,7 +96,7 @@ public class OtaPackageEntity extends BaseSqlEntity<OtaPackage> {
     private String checksum;
 
     @Lob
-    @Column(name = OTA_PACKAGE_DATA_COLUMN, columnDefinition = "BINARY")
+    @Column(name = OTA_PACKAGE_DATA_COLUMN)
     private byte[] data;
 
     @Column(name = OTA_PACKAGE_DATA_SIZE_COLUMN)

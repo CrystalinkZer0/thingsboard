@@ -1,0 +1,179 @@
+#
+# Copyright © 2016-2026 The Thingsboard Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+#
+
+name: Deploy to Raspberry Pi
+
+on:
+  push:
+    branches:
+      - main
+      - production
+      - development
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy'
+        required: true
+        default: 'development'
+        type: choice
+        options:
+          - development
+          - staging
+          - production
+
+env:
+  RASPBERRY_HOST: ${{ secrets.RASPBERRY_HOST }}
+  RASPBERRY_USER: ${{ secrets.RASPBERRY_USER }}
+  PROJECT_NAME: thingsboard
+
+jobs:
+  deploy:
+    name: Deploy to Raspberry Pi
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set environment
+        id: set-env
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "ENVIRONMENT=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
+          elif [ "${{ github.ref }}" == "refs/heads/production" ]; then
+            echo "ENVIRONMENT=production" >> $GITHUB_OUTPUT
+          elif [ "${{ github.ref }}" == "refs/heads/main" ]; then
+            echo "ENVIRONMENT=staging" >> $GITHUB_OUTPUT
+          else
+            echo "ENVIRONMENT=development" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.RASPBERRY_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.RASPBERRY_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Create project structure
+        run: |
+          ssh ${{ secrets.RASPBERRY_USER }}@${{ secrets.RASPBERRY_HOST }} "
+            mkdir -p ~/docker-projects/${{ env.PROJECT_NAME }}/{docker,backups,logs}
+          "
+
+      - name: Backup current deployment
+        run: |
+          ssh ${{ secrets.RASPBERRY_USER }}@${{ secrets.RASPBERRY_HOST }} "
+            cd ~/docker-projects/${{ env.PROJECT_NAME }}/docker
+            if [ -f docker-compose.yml ]; then
+              docker compose ps -q | xargs -r docker inspect --format='{{.Name}}: {{.State.Status}}' > ../backups/pre-deploy-\$(date +%Y%m%d-%H%M%S).txt || true
+            fi
+          "
+
+      - name: Sync files
+        run: |
+          rsync -avz --delete \
+            -e "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no" \
+            --exclude='.git' \
+            --exclude='node_modules' \
+            --exclude='*.log' \
+            --exclude='.env.local' \
+            ./docker/ \
+            ${{ secrets.RASPBERRY_USER }}@${{ secrets.RASPBERRY_HOST }}:~/docker-projects/${{ env.PROJECT_NAME }}/docker/
+
+      - name: Deploy with Docker Compose
+        run: |
+          ssh ${{ secrets.RASPBERRY_USER }}@${{ secrets.RASPBERRY_HOST }} "
+            cd ~/docker-projects/${{ env.PROJECT_NAME }}/docker
+            
+            # Pull latest images
+            docker compose pull
+            
+            # Stop old containers
+            docker compose down
+            
+            # Start new containers
+            if [ '${{ steps.set-env.outputs.ENVIRONMENT }}' == 'production' ]; then
+              docker compose -f docker-compose.yml -f docker-compose.postgres.yml up -d
+            else
+              docker compose up -d
+            fi
+            
+            # Wait for containers to be healthy
+            sleep 10
+            
+            # Show status
+            docker compose ps
+          "
+
+      - name: Health check
+        run: |
+          ssh ${{ secrets.RASPBERRY_USER }}@${{ secrets.RASPBERRY_HOST }} "
+            cd ~/docker-projects/${{ env.PROJECT_NAME }}/docker
+            
+            # Wait up to 5 minutes for services to be healthy
+            timeout=300
+            elapsed=0
+            
+            while [ \$elapsed -lt \$timeout ]; do
+              if curl -f -s http://localhost > /dev/null; then
+                echo '✅ Service is healthy'
+                exit 0
+              fi
+              sleep 10
+              elapsed=\$((elapsed + 10))
+              echo 'Waiting for service to be ready...'
+            done
+            
+            echo '❌ Service failed to become healthy'
+            docker compose logs
+            exit 1
+          "
+
+      - name: Cleanup old images
+        if: success()
+        run: |
+          ssh ${{ secrets.RASPBERRY_USER }}@${{ secrets.RASPBERRY_HOST }} "
+            docker image prune -f
+          "
+
+      - name: Rollback on failure
+        if: failure()
+        run: |
+          ssh ${{ secrets.RASPBERRY_USER }}@${{ secrets.RASPBERRY_HOST }} "
+            cd ~/docker-projects/${{ env.PROJECT_NAME }}/docker
+            echo '❌ Deployment failed, attempting rollback...'
+            
+            # Get last backup timestamp
+            LAST_BACKUP=\$(ls -t ../backups/pre-deploy-*.txt | head -1)
+            
+            if [ -n '\$LAST_BACKUP' ]; then
+              echo 'Rolling back to previous version...'
+              docker compose down
+              docker compose up -d
+            fi
+          "
+
+      - name: Notify deployment status
+        if: always()
+        run: |
+          if [ "${{ job.status }}" == "success" ]; then
+            echo "✅ Deployment to ${{ steps.set-env.outputs.ENVIRONMENT }} succeeded!"
+          else
+            echo "❌ Deployment to ${{ steps.set-env.outputs.ENVIRONMENT }} failed!"
+          fi

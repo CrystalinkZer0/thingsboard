@@ -1,0 +1,158 @@
+#
+# Copyright © 2016-2026 The Thingsboard Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+#
+
+# GitLab CI/CD Pipeline para Raspberry Pi
+
+stages:
+  - build
+  - test
+  - deploy
+
+variables:
+  PROJECT_NAME: "thingsboard"
+  RASPBERRY_HOST: "$RASPBERRY_HOST"
+  RASPBERRY_USER: "$RASPBERRY_USER"
+
+# Template para deployment
+.deploy_template: &deploy_template
+  before_script:
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    - echo "$RASPBERRY_SSH_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan -H $RASPBERRY_HOST >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+    - apt-get update -y && apt-get install -y rsync
+
+  script:
+    - echo "Deploying to $CI_ENVIRONMENT_NAME environment"
+    
+    # Create structure
+    - |
+      ssh $RASPBERRY_USER@$RASPBERRY_HOST "
+        mkdir -p ~/docker-projects/$PROJECT_NAME/{docker,backups,logs}
+      "
+    
+    # Backup current state
+    - |
+      ssh $RASPBERRY_USER@$RASPBERRY_HOST "
+        cd ~/docker-projects/$PROJECT_NAME/docker
+        if [ -f docker-compose.yml ]; then
+          docker compose ps -q | xargs -r docker inspect --format='{{.Name}}: {{.State.Status}}' > ../backups/pre-deploy-\$(date +%Y%m%d-%H%M%S).txt || true
+        fi
+      "
+    
+    # Sync files
+    - |
+      rsync -avz --delete \
+        --exclude='.git' \
+        --exclude='node_modules' \
+        --exclude='*.log' \
+        --exclude='.env.local' \
+        ./docker/ \
+        $RASPBERRY_USER@$RASPBERRY_HOST:~/docker-projects/$PROJECT_NAME/docker/
+    
+    # Deploy
+    - |
+      ssh $RASPBERRY_USER@$RASPBERRY_HOST "
+        cd ~/docker-projects/$PROJECT_NAME/docker
+        docker compose pull
+        docker compose down
+        
+        if [ '$CI_ENVIRONMENT_NAME' == 'production' ]; then
+          docker compose -f docker-compose.yml -f docker-compose.postgres.yml up -d
+        else
+          docker compose up -d
+        fi
+        
+        sleep 10
+        docker compose ps
+      "
+    
+    # Health check
+    - |
+      ssh $RASPBERRY_USER@$RASPBERRY_HOST "
+        timeout=300
+        elapsed=0
+        while [ \$elapsed -lt \$timeout ]; do
+          if curl -f -s http://localhost > /dev/null; then
+            echo '✅ Service is healthy'
+            exit 0
+          fi
+          sleep 10
+          elapsed=\$((elapsed + 10))
+        done
+        echo '❌ Service failed health check'
+        exit 1
+      "
+
+# Development deployment
+deploy:development:
+  <<: *deploy_template
+  stage: deploy
+  environment:
+    name: development
+    url: http://$RASPBERRY_HOST
+  only:
+    - development
+  tags:
+    - docker
+
+# Staging deployment
+deploy:staging:
+  <<: *deploy_template
+  stage: deploy
+  environment:
+    name: staging
+    url: http://$RASPBERRY_HOST
+  only:
+    - main
+  tags:
+    - docker
+
+# Production deployment
+deploy:production:
+  <<: *deploy_template
+  stage: deploy
+  environment:
+    name: production
+    url: http://$RASPBERRY_HOST
+  only:
+    - production
+  when: manual
+  tags:
+    - docker
+
+# Rollback job
+rollback:
+  stage: deploy
+  script:
+    - eval $(ssh-agent -s)
+    - echo "$RASPBERRY_SSH_KEY" | tr -d '\r' | ssh-add -
+    - |
+      ssh $RASPBERRY_USER@$RASPBERRY_HOST "
+        cd ~/docker-projects/$PROJECT_NAME/docker
+        echo 'Rolling back to previous version...'
+        docker compose down
+        # Restore previous docker-compose from backup if needed
+        docker compose up -d
+      "
+  when: manual
+  tags:
+    - docker
