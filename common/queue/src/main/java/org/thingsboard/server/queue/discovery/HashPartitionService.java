@@ -94,6 +94,10 @@ public class HashPartitionService implements PartitionService {
     private String tasksPartitionsPerType;
     @Value("${queue.partitions.hash_function_name:murmur3_128}")
     private String hashFunctionName;
+    @Value("${queue.routing.retries:10}")
+    private Integer queueRoutingRetries;
+    @Value("${queue.routing.retry_interval:10000}")
+    private Integer queueRoutingRetryInterval;
 
     private final ApplicationEventPublisher applicationEventPublisher;
     private final TbServiceInfoProvider serviceInfoProvider;
@@ -189,24 +193,25 @@ public class HashPartitionService implements PartitionService {
 
         if (isTransport(serviceType)) {
             //If transport started earlier than tb-core
-            int getQueuesRetries = 10;
+            int getQueuesRetries = queueRoutingRetries;
             while (true) {
                 if (getQueuesRetries > 0) {
-                    log.info("Try to get queue routing info.");
+                    log.info("Try to get queue routing info. Retries remaining: {}", getQueuesRetries);
                     try {
                         queueRoutingInfoList = queueRoutingInfoService.get().getAllQueuesRoutingInfo();
+                        log.info("Successfully obtained queue routing info");
                         break;
                     } catch (Exception e) {
                         log.info("Failed to get queues routing info: {}!", e.getMessage());
                         getQueuesRetries--;
                     }
                     try {
-                        Thread.sleep(10000);
+                        Thread.sleep(queueRoutingRetryInterval);
                     } catch (InterruptedException e) {
                         log.info("Failed to await queues routing info!", e);
                     }
                 } else {
-                    throw new RuntimeException("Failed to await queues routing info!");
+                    throw new RuntimeException("Failed to await queues routing info after " + queueRoutingRetries + " retries!");
                 }
             }
         } else {

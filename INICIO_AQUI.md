@@ -2,13 +2,14 @@
 
 **Estado**: Listo para desplegar ✅  
 **Versión ThingsBoard**: 4.4.0  
-**Rama Git**: getmarket-iot  
+**Rama Git**: getmarket-iot
 
 ---
 
 ## 🆘 ¿Problemas al Iniciar Docker ThingsBoard?
 
 Si ves errores como:
+
 - ⚠️ `The "JAVA_OPTS" variable is not set`
 - ❌ Contenedores restarting sin iniciar
 - ❌ `Cannot connect to database`
@@ -93,6 +94,7 @@ El script anterior generó código Arduino. Ahora:
 ```
 
 **Verificación**: Monitor serial muestra:
+
 ```
 WiFi conectado: 192.168.4.XXX
 Conectando a MQTT... conectado!
@@ -156,18 +158,19 @@ curl http://localhost:3000/health/thingsboard
 
 ## 📚 DOCUMENTACIÓN DE REFERENCIA
 
-| Documento | Use cuando... |
-|-----------|--------------|
-| **[PLAN_EJECUCION.md](PLAN_EJECUCION.md)** | Necesites entender las 4 fases completas |
-| **[GUIA_DEPLOYMENT_IOT_COMPLETO.md](GUIA_DEPLOYMENT_IOT_COMPLETO.md)** | Necesites detalles paso a paso con ejemplos |
-| **[RESUMEN_CONFIGURACION.md](RESUMEN_CONFIGURACION.md)** | Necesites referencia rápida de puertos y APIs |
-| **[THINGSBOARD_INTEGRATION.md](THINGSBOARD_INTEGRATION.md)** | Implementes código en getmarket-iot |
+| Documento                                                              | Use cuando...                                 |
+| ---------------------------------------------------------------------- | --------------------------------------------- |
+| **[PLAN_EJECUCION.md](PLAN_EJECUCION.md)**                             | Necesites entender las 4 fases completas      |
+| **[GUIA_DEPLOYMENT_IOT_COMPLETO.md](GUIA_DEPLOYMENT_IOT_COMPLETO.md)** | Necesites detalles paso a paso con ejemplos   |
+| **[RESUMEN_CONFIGURACION.md](RESUMEN_CONFIGURACION.md)**               | Necesites referencia rápida de puertos y APIs |
+| **[THINGSBOARD_INTEGRATION.md](THINGSBOARD_INTEGRATION.md)**           | Implementes código en getmarket-iot           |
 
 ---
 
 ## ⚠️ TROUBLESHOOTING RÁPIDO
 
 ### ThingsBoard no inicia
+
 ```bash
 # Ver por qué error
 ssh innvoid@192.168.4.177 \
@@ -175,6 +178,7 @@ ssh innvoid@192.168.4.177 \
 ```
 
 ### ESP32 no conecta a WiFi
+
 ```
 Monitor Serial (115200 baud):
 - Mira la red WiFi que está intentando (SSID)
@@ -183,6 +187,7 @@ Monitor Serial (115200 baud):
 ```
 
 ### getmarket-iot no conecta con ThingsBoard
+
 ```bash
 # Verifica que Raspberry sea accesible
 ping 192.168.4.177
@@ -200,7 +205,7 @@ curl http://192.168.4.177:8080/api/auth/login \
 ✅ **Fase 1**: ThingsBoard accesible en http://192.168.4.177:8080  
 ✅ **Fase 2**: ESP32_IoT_Sensors aparece en Devices  
 ✅ **Fase 3**: Datos (temp, humedad, sonido) se actualizan en tiempo real  
-✅ **Fase 4**: getmarket-iot responde en /health/thingsboard  
+✅ **Fase 4**: getmarket-iot responde en /health/thingsboard
 
 ---
 
@@ -209,7 +214,7 @@ curl http://192.168.4.177:8080/api/auth/login \
 ```
 START
   │
-  ├─► ¿ThingsBoard corriendo? 
+  ├─► ¿ThingsBoard corriendo?
   │   NO → `./deploy-thingsboard-raspberry.sh`
   │   SÍ → Siguiente
   │
@@ -308,6 +313,7 @@ Una vez todo funcione:
 El sistema está completamente documentado. Ejecuta los pasos en orden y llegarás al éxito.
 
 **Primer comando a ejecutar**:
+
 ```bash
 cd /Users/pedrovalenzuela/Documents/Innvoid/Desarrollo/thingsboard/docker
 ./deploy-thingsboard-raspberry.sh

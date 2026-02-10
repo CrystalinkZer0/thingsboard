@@ -2,7 +2,7 @@
 
 **Sistema**: ThingsBoard + ESP32 + getmarket-iot  
 **Versión**: 4.4.0  
-**Última actualización**: Febrero 5, 2026  
+**Última actualización**: Febrero 6, 2026
 
 ---
 
@@ -11,6 +11,9 @@
 ```
 ¿ACABAS DE LLEGAR?
   └─> Lee: INICIO_AQUI.md (5 min)
+
+¿QUIERES INICIAR THINGSBOARD EN RASPBERRY PI?
+  └─> Lee: GUIA_STARTUP_RASPBERRY.md (RECOMENDADO) ⭐
 
 ¿QUIERES VER EL PLAN COMPLETO?
   └─> Lee: PLAN_EJECUCION.md (15 min)
@@ -69,6 +72,13 @@ thingsboard/
 │   │   └─ API de getmarket-iot
 │   │   └─ Health checks
 │   │
+│   ├── GUIA_STARTUP_RASPBERRY.md ⭐ (NUEVO)
+│   │   └─ Inicio optimizado para Raspberry Pi 4
+│   │   └─ Configuración de instancia única
+│   │   └─ Solución a problemas de memoria
+│   │   └─ Scripts de diagnóstico
+│   │   └─ Troubleshooting específico RPi
+│   │
 │   └── MANUAL_CONFIGURACION.md (EXISTENTE)
 │       └─ Arquitectura técnica
 │       └─ Configuración base
@@ -97,6 +107,7 @@ thingsboard/
 ## 🗺️ DOCUMENTO POR CASO DE USO
 
 ### 📋 "Acabo de llegar, ¿por dónde empiezo?"
+
 ```
 1. INICIO_AQUI.md (5 min)
 2. Ejecuta: deploy-thingsboard-raspberry.sh
@@ -106,6 +117,7 @@ thingsboard/
 ```
 
 ### 🏗️ "Necesito entender la arquitectura"
+
 ```
 1. PLAN_EJECUCION.md (visión general)
 2. RESUMEN_CONFIGURACION.md (diagramas)
@@ -113,14 +125,28 @@ thingsboard/
 ```
 
 ### 🔧 "Algo no funciona, ¿cómo debuggeo?"
+
 ```
-1. RESUMEN_CONFIGURACION.md → Sección troubleshooting
-2. GUIA_DEPLOYMENT_IOT_COMPLETO.md → Sección troubleshooting
-3. Ver logs: ssh innvoid@192.168.4.177 "docker logs ..."
-4. Ver status: ./docker/check-thingsboard-connection.sh
+1. GUIA_STARTUP_RASPBERRY.md → Solución de Problemas ⭐
+2. RESUMEN_CONFIGURACION.md → Sección troubleshooting
+3. GUIA_DEPLOYMENT_IOT_COMPLETO.md → Sección troubleshooting
+4. Ver logs: ssh innvoid@192.168.4.177 "docker logs ..."
+5. Ver status: ./docker/check-thingsboard-connection.sh
+```
+
+### 🚀 "¿Cómo inicio ThingsBoard en Raspberry Pi?"
+
+```
+1. GUIA_STARTUP_RASPBERRY.md ⭐ (NUEVA - RECOMENDADA)
+   └─ Configuración optimizada para RPi 4 (8GB)
+   └─ Pasos detallados con checklist
+   └─ Solución a problemas de memoria/swap
+2. Ejecutar checklist de inicio rápido
+3. Verificar con ~/check-thingsboard.sh
 ```
 
 ### 💻 "Necesito integrar getmarket-iot"
+
 ```
 1. THINGSBOARD_INTEGRATION.md (código TypeScript)
 2. GUIA_DEPLOYMENT_IOT_COMPLETO.md → Fase 4
@@ -128,6 +154,7 @@ thingsboard/
 ```
 
 ### 📱 "¿Qué configuración tiene el ESP32?"
+
 ```
 1. RESUMEN_CONFIGURACION.md → Sección ESP32
 2. GUIA_DEPLOYMENT_IOT_COMPLETO.md → Paso 3 (código Arduino)
@@ -138,24 +165,30 @@ thingsboard/
 
 ## 📊 MATRIZ DE REFERENCIA
 
-| Pregunta | Documento | Línea |
-|----------|-----------|-------|
-| ¿Cómo despliego? | PLAN_EJECUCION.md | Fase 1 |
-| ¿Cómo registro ESP32? | PLAN_EJECUCION.md | Fase 2 |
-| ¿Qué puertos se usan? | RESUMEN_CONFIGURACION.md | Tabla Puertos |
-| ¿Qué es cada GPIO? | RESUMEN_CONFIGURACION.md | Diagrama ESP32 |
-| ¿Credenciales? | RESUMEN_CONFIGURACION.md | Sección Credenciales |
-| ¿Código Arduino? | GUIA_DEPLOYMENT_IOT_COMPLETO.md | Paso 3 |
-| ¿Conectar getmarket-iot? | THINGSBOARD_INTEGRATION.md | ThingsBoardService |
-| ¿Error en ThingsBoard? | GUIA_DEPLOYMENT_IOT_COMPLETO.md | Troubleshooting |
-| ¿Error en ESP32? | GUIA_DEPLOYMENT_IOT_COMPLETO.md | Troubleshooting |
-| ¿Error en getmarket-iot? | GUIA_DEPLOYMENT_IOT_COMPLETO.md | Troubleshooting |
+| Pregunta                 | Documento                       | Línea                 |
+| ------------------------ | ------------------------------- | --------------------- |
+| ¿Cómo despliego?         | PLAN_EJECUCION.md               | Fase 1                |
+| ¿Cómo inicio en RPi?     | GUIA_STARTUP_RASPBERRY.md ⭐    | Todo                  |
+| ¿Error 503?              | GUIA_STARTUP_RASPBERRY.md       | Solución de Problemas |
+| ¿Swap al 100%?           | GUIA_STARTUP_RASPBERRY.md       | Problemas de Memoria  |
+| ¿Cómo registro ESP32?    | PLAN_EJECUCION.md               | Fase 2                |
+| ¿Qué puertos se usan?    | RESUMEN_CONFIGURACION.md        | Tabla Puertos         |
+| ¿Qué es cada GPIO?       | RESUMEN_CONFIGURACION.md        | Diagrama ESP32        |
+| ¿Credenciales?           | RESUMEN_CONFIGURACION.md        | Sección Credenciales  |
+| ¿Código Arduino?         | GUIA_DEPLOYMENT_IOT_COMPLETO.md | Paso 3                |
+| ¿Conectar getmarket-iot? | THINGSBOARD_INTEGRATION.md      | ThingsBoardService    |
+| ¿Error en ThingsBoard?   | GUIA_DEPLOYMENT_IOT_COMPLETO.md | Troubleshooting       |
+| ¿Verificar estado?       | GUIA_STARTUP_RASPBERRY.md       | check-thingsboard.sh  |
+| ¿Servicios a detener?    | GUIA_STARTUP_RASPBERRY.md       | Paso 3 Optimización   |
+| ¿Error en ESP32?         | GUIA_DEPLOYMENT_IOT_COMPLETO.md | Troubleshooting       |
+| ¿Error en getmarket-iot? | GUIA_DEPLOYMENT_IOT_COMPLETO.md | Troubleshooting       |
 
 ---
 
 ## 📚 ORDEN DE LECTURA RECOMENDADO
 
 ### Para Ejecutores Ágiles (20 minutos)
+
 ```
 1. INICIO_AQUI.md (5 min)
 2. RESUMEN_CONFIGURACION.md → Credenciales (2 min)
@@ -164,6 +197,7 @@ thingsboard/
 ```
 
 ### Para Entendedores (1 hora)
+
 ```
 1. PLAN_EJECUCION.md (15 min)
 2. RESUMEN_CONFIGURACION.md (15 min)
@@ -172,6 +206,7 @@ thingsboard/
 ```
 
 ### Para Completistas (2 horas)
+
 ```
 1. README_RESUMEN.md (5 min)
 2. PLAN_EJECUCION.md (15 min)
@@ -273,12 +308,14 @@ START
 ### Busqueda Rápida (Ctrl+F)
 
 En **RESUMEN_CONFIGURACION.md**, busca:
+
 - `puerto` → tabla de puertos
 - `GPIO` → pines del ESP32
 - `credenciales` → usuarios y passwords
 - `checklist` → verificación
 
 En **GUIA_DEPLOYMENT_IOT_COMPLETO.md**, busca:
+
 - `PASO` → fases principales
 - `Verificación` → cómo confirmar cada paso
 - `Error` → problemas comunes
@@ -286,6 +323,7 @@ En **GUIA_DEPLOYMENT_IOT_COMPLETO.md**, busca:
 ### Copy-Paste Ready
 
 Todos los comandos y código están listos para copiar:
+
 ```bash
 # Ejemplo:
 ./deploy-thingsboard-raspberry.sh
@@ -296,6 +334,7 @@ Todos los comandos y código están listos para copiar:
 ### Diagramas Visuales
 
 Revisa **RESUMEN_CONFIGURACION.md** para:
+
 - Diagrama de red
 - Pines ESP32
 - Tabla de puertos
@@ -321,21 +360,25 @@ Si no conoces estos, revísalos en MANUAL_CONFIGURACION.md:
 ## 🆘 AYUDA RÁPIDA
 
 ### No encuentro un archivo
+
 ```bash
 find /Users/pedrovalenzuela/Documents/Innvoid/Desarrollo/thingsboard -name "*.md" | grep -i thingsboard
 ```
 
 ### Necesito ver un script
+
 ```bash
 less /Users/pedrovalenzuela/Documents/Innvoid/Desarrollo/thingsboard/docker/deploy-thingsboard-raspberry.sh
 ```
 
 ### Ver logs en Raspberry
+
 ```bash
 ssh innvoid@192.168.4.177 "cd ~/docker-projects/thingsboard/docker && docker compose logs -f"
 ```
 
 ### Ver estado de contenedores
+
 ```bash
 ssh innvoid@192.168.4.177 "docker ps"
 ```
@@ -385,6 +428,6 @@ open http://192.168.4.177:8080
 
 **Última actualización**: Febrero 5, 2026  
 **Versión**: 1.0 - Completa  
-**Estado**: ✅ 100% Listo  
+**Estado**: ✅ 100% Listo
 
 **¡Empieza aquí: [INICIO_AQUI.md](INICIO_AQUI.md) ⭐**
