@@ -5,6 +5,7 @@ This folder containing scripts and Docker Compose configurations to run ThingsBo
 ## 🆘 Troubleshooting Quick Links
 
 **¿Problemas al iniciar ThingsBoard?**
+
 - ⚠️ `The "JAVA_OPTS" variable is not set` warning
 - ❌ Contenedores restarting sin iniciar
 - ❌ ERROR: Cannot connect to database/cache
@@ -36,18 +37,14 @@ In order to set cache type change the value of `CACHE` variable in `.env` file t
 
 **NOTE**: According to the cache type corresponding docker service will be deployed (see `docker-compose.valkey.yml`, `docker-compose.valkey-cluster.yml`, `docker-compose.valkey-sentinel.yml` for details).
 
-Execute the following command to create log folders for the services and chown of these folders to the docker container users. 
-To be able to change user, **chown** command is used, which requires sudo permissions (script will request password for a sudo access): 
+Execute the following command to create log folders for the services and chown of these folders to the docker container users.
+To be able to change user, **chown** command is used, which requires sudo permissions (script will request password for a sudo access):
 
-`
-$ ./docker-create-log-folders.sh
-`
+`$ ./docker-create-log-folders.sh`
 
 Execute the following command to run installation:
 
-`
-$ ./docker-install-tb.sh --loadDemo
-`
+`$ ./docker-install-tb.sh --loadDemo`
 
 Where:
 
@@ -57,9 +54,7 @@ Where:
 
 Execute the following command to start services:
 
-`
-$ ./docker-start-services.sh
-`
+`$ ./docker-start-services.sh`
 
 After a while when all services will be successfully started you can open `http://{your-host-ip}` in you browser (for ex. `http://localhost`).
 You should see ThingsBoard login page.
@@ -76,9 +71,7 @@ If you installed DataBase with demo data (using `--loadDemo` flag) you can also 
 In case of any issues you can examine service logs for errors.
 For example to see ThingsBoard node logs execute the following command:
 
-`
-$ docker-compose logs -f tb-core1 tb-core2 tb-rule-engine1 tb-rule-engine2 tb-mqtt-transport1 tb-mqtt-transport2
-`
+`$ docker-compose logs -f tb-core1 tb-core2 tb-rule-engine1 tb-rule-engine2 tb-mqtt-transport1 tb-mqtt-transport2`
 
 Or use `docker-compose ps` to see the state of all the containers.
 Use `docker-compose logs --f` to inspect the logs of all running services.
@@ -86,21 +79,15 @@ See [docker-compose logs](https://docs.docker.com/compose/reference/logs/) comma
 
 Execute the following command to stop services:
 
-`
-$ ./docker-stop-services.sh
-`
+`$ ./docker-stop-services.sh`
 
 Execute the following command to stop and completely remove deployed docker containers:
 
-`
-$ ./docker-remove-services.sh
-`
+`$ ./docker-remove-services.sh`
 
 Execute the following command to update particular or all services (pull newer docker image and rebuild container):
 
-`
-$ ./docker-update-service.sh [SERVICE...]
-`
+`$ ./docker-update-service.sh [SERVICE...]`
 
 Where:
 
@@ -119,7 +106,6 @@ $ ./docker-start-services.sh
 Where:
 
 - `FROM_VERSION` - from which version upgrade should be started. See [Upgrade Instructions](https://thingsboard.io/docs/user-guide/install/upgrade-instructions) for valid `fromVersion` values.
-
 
 ## Monitoring
 

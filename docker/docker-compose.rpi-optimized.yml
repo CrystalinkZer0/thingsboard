@@ -1,0 +1,125 @@
+#
+# ThingsBoard Optimized Configuration for Raspberry Pi 4 (4 cores, 8GB RAM)
+# This override reduces services to minimum viable for IoT platform
+# Usage: docker compose -f docker-compose.yml -f docker-compose.rpi-optimized.yml up -d
+#
+
+services:
+  # Reduce JS Executors from 10 to 2 (saves ~2GB RAM)
+  tb-js-executor:
+    deploy:
+      replicas: 2
+
+  # Disable secondary tb-core instance (saves ~1GB RAM)
+  tb-core2:
+    deploy:
+      replicas: 0
+    profiles:
+      - disabled
+
+  # Disable secondary rule-engine (saves ~1GB RAM)
+  tb-rule-engine2:
+    deploy:
+      replicas: 0
+    profiles:
+      - disabled
+
+  # Update primary core dependencies (remove tb-core2 and tb-rule-engine2)
+  tb-core1:
+    depends_on:
+      - zookeeper
+      - tb-js-executor
+      - tb-rule-engine1
+    environment:
+      TB_SERVICE_ID: tb-core1
+      TB_SERVICE_TYPE: tb-core
+      EDGES_ENABLED: "true"
+      JAVA_OPTS: "-Xms512M -Xmx1024M"
+
+  tb-rule-engine1:
+    environment:
+      TB_SERVICE_ID: tb-rule-engine1
+      TB_SERVICE_TYPE: tb-rule-engine
+      JAVA_OPTS: "-Xms256M -Xmx768M"
+
+  # Disable secondary MQTT transport (saves ~400MB RAM)
+  tb-mqtt-transport2:
+    deploy:
+      replicas: 0
+    profiles:
+      - disabled
+
+  # Update primary MQTT transport
+  tb-mqtt-transport1:
+    depends_on:
+      - zookeeper
+      - tb-core1
+    environment:
+      TB_SERVICE_ID: tb-mqtt-transport1
+      JAVA_OPTS: "-Xms256M -Xmx512M"
+
+  # Disable secondary HTTP transport (saves ~400MB RAM)
+  tb-http-transport2:
+    deploy:
+      replicas: 0
+    profiles:
+      - disabled
+
+  # Update primary HTTP transport
+  tb-http-transport1:
+    depends_on:
+      - zookeeper
+      - tb-core1
+    environment:
+      TB_SERVICE_ID: tb-http-transport1
+      JAVA_OPTS: "-Xms256M -Xmx512M"
+
+  # Update CoAP transport dependencies
+  tb-coap-transport:
+    depends_on:
+      - zookeeper
+      - tb-core1
+    environment:
+      TB_SERVICE_ID: tb-coap-transport
+      JAVA_OPTS: "-Xms128M -Xmx256M"
+
+  # Update Web UI dependencies
+  tb-web-ui1:
+    depends_on:
+      - tb-core1
+    env_file:
+      - tb-web-ui.env
+
+  # Disable secondary Web UI (saves ~200MB RAM)
+  tb-web-ui2:
+    deploy:
+      replicas: 0
+    profiles:
+      - disabled
+
+  # Disable LWM2M transport (optional protocol, saves ~300MB RAM)
+  tb-lwm2m-transport:
+    deploy:
+      replicas: 0
+    profiles:
+      - disabled
+
+  # Disable SNMP transport (optional protocol, saves ~300MB RAM)
+  tb-snmp-transport:
+    deploy:
+      replicas: 0
+    profiles:
+      - disabled
+
+  # Disable both VC executors (version control, saves ~800MB RAM)
+  tb-vc-executor1:
+    deploy:
+      replicas: 0
+    profiles:
+      - disabled
+
+  tb-vc-executor2:
+    deploy:
+      replicas: 0
+    profiles:
+      - disabled
