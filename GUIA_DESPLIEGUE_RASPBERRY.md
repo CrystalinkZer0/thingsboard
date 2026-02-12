@@ -15,11 +15,13 @@ Esta configuración permite gestionar múltiples microservicios dockerizados en 
 ## 📍 Acceso a Portainer
 
 ### Desde la Red Local (192.168.4.x):
+
 ```
 https://192.168.4.177:9443
 ```
 
 ### Configuración Inicial:
+
 1. Primera vez: Crea un usuario admin con contraseña segura
 2. Selecciona: "Get Started" → Gestionar ambiente local
 3. Ya puedes ver y gestionar todos los contenedores
@@ -48,6 +50,7 @@ docker context use default
 ```
 
 ### Ventajas:
+
 - ✅ Usas tus comandos Docker locales
 - ✅ Funciona desde la misma red
 - ✅ No expone puertos adicionales
@@ -69,7 +72,8 @@ cd /Users/pedrovalenzuela/Documents/Innvoid/Desarrollo/thingsboard/docker
 ./deploy-to-raspberry.sh mi-microservicio development
 ```
 
-### Lo que hace el script:
+### Lo que hace el script:sudo iptables -L INPUT -n -v | grep 1883 && echo -e "\n=== UFW STATUS ===" && sudo ufw status | grep 1883
+
 1. ✅ Verifica conectividad
 2. ✅ Crea estructura de directorios
 3. ✅ Copia archivos del proyecto
@@ -79,6 +83,7 @@ cd /Users/pedrovalenzuela/Documents/Innvoid/Desarrollo/thingsboard/docker
 7. ✅ Verifica estado
 
 ### Estructura en Raspberry:
+
 ```
 ~/docker-projects/
 ├── thingsboard/
@@ -93,6 +98,53 @@ cd /Users/pedrovalenzuela/Documents/Innvoid/Desarrollo/thingsboard/docker
     ├── docker/
     ├── backups/
     └── logs/
+```
+
+---
+
+## ✅ Configuración mínima validada (Raspberry Pi 8GB)
+
+Esta es la configuración estable y de bajo consumo usada en esta instalación.
+
+### Archivos a clonar
+
+- `docker/docker-compose.yml`
+- `docker/.env`
+- `docker/tb-node.env`
+- `docker/tb-mqtt-transport.env`
+- `docker/tb-transports/mqtt/conf` (solo si tienes ajustes personalizados)
+
+### Valores clave (verificados)
+
+```dotenv
+# docker/.env
+JAVA_OPTS="-Xmx1024M -Xms512M -Xss256k"
+TB_QUEUE_TYPE=kafka
+```
+
+```dotenv
+# docker/tb-node.env
+TB_QUEUE_TYPE=kafka
+TB_KAFKA_SERVERS=kafka:9092
+LOGGING_CONFIG=classpath:logback-spring-console-only.xml
+```
+
+```dotenv
+# docker/tb-mqtt-transport.env
+TB_QUEUE_TYPE=kafka
+TB_KAFKA_SERVERS=kafka:9092
+QUEUE_ROUTING_RETRIES=60
+QUEUE_ROUTING_RETRY_INTERVAL=10000
+```
+
+### Guardar snapshot para clonar
+
+```bash
+ssh innvoid@192.168.4.177 "cd ~/docker-projects/thingsboard/docker && \
+   cp docker-compose.yml docker-compose.yml.min && \
+   cp .env .env.min && \
+   cp tb-node.env tb-node.env.min && \
+   cp tb-mqtt-transport.env tb-mqtt-transport.env.min"
 ```
 
 ---
@@ -148,6 +200,7 @@ nano ~/.cloudflared/config.yml
 ```
 
 Contenido:
+
 ```yaml
 tunnel: <TUNNEL-ID>
 credentials-file: /home/innvoid/.cloudflared/<TUNNEL-ID>.json
@@ -209,12 +262,14 @@ ssh innvoid@192.168.4.177 "docker volume prune"
 ## 📊 Monitoreo
 
 ### Portainer:
+
 - Dashboard con uso de CPU, RAM, red
 - Logs en tiempo real
 - Consola interactiva
 - Gestión de stacks
 
 ### CLI:
+
 ```bash
 # Uso de recursos
 docker context use raspberry
@@ -238,6 +293,7 @@ docker compose -f ~/docker-projects/thingsboard/docker/docker-compose.yml logs -
    - ThingsBoard: `tenant@thingsboard.org` / nueva contraseña
 
 2. **Firewall**
+
    ```bash
    ssh innvoid@192.168.4.177
    sudo ufw enable
@@ -249,6 +305,7 @@ docker compose -f ~/docker-projects/thingsboard/docker/docker-compose.yml logs -
    ```
 
 3. **Autenticación SSH con llaves**
+
    ```bash
    # En tu Mac
    ssh-keygen -t ed25519 -C "tu@email.com"
@@ -295,6 +352,7 @@ docker compose -f ~/docker-projects/thingsboard/docker/docker-compose.yml logs -
 ## 📝 Troubleshooting
 
 ### Portainer no carga:
+
 ```bash
 ssh innvoid@192.168.4.177
 docker restart portainer
@@ -302,12 +360,14 @@ docker logs portainer
 ```
 
 ### Docker Context falla:
+
 ```bash
 docker context rm raspberry
 docker context create raspberry --docker "host=ssh://innvoid@192.168.4.177"
 ```
 
 ### Contenedores no inician:
+
 ```bash
 docker context use raspberry
 docker compose logs
@@ -327,6 +387,7 @@ docker inspect <container-name>
 ## 📞 Soporte
 
 Para más información sobre comandos Docker y Compose:
+
 - Docker Docs: https://docs.docker.com
 - Portainer Docs: https://docs.portainer.io
 - Compose Docs: https://docs.docker.com/compose/

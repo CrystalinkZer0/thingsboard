@@ -72,12 +72,20 @@ thingsboard/
 │   │   └─ API de getmarket-iot
 │   │   └─ Health checks
 │   │
-│   ├── GUIA_STARTUP_RASPBERRY.md ⭐ (NUEVO)
+│   ├── GUIA_STARTUP_RASPBERRY.md ⭐
 │   │   └─ Inicio optimizado para Raspberry Pi 4
 │   │   └─ Configuración de instancia única
 │   │   └─ Solución a problemas de memoria
 │   │   └─ Scripts de diagnóstico
 │   │   └─ Troubleshooting específico RPi
+│   │
+│   ├── DIAGNOSTICO_RASPBERRY_192.168.4.177.md ⭐ (NUEVO)
+│   │   └─ Diagnóstico completo del sistema actual
+│   │   └─ Análisis de recursos (RAM, CPU, Disco)
+│   │   └─ Problemas identificados y soluciones
+│   │   └─ Plan de optimización paso a paso
+│   │   └─ Configuración de acceso remoto (Tailscale)
+│   │   └─ Recomendaciones para sensores en terreno
 │   │
 │   └── MANUAL_CONFIGURACION.md (EXISTENTE)
 │       └─ Arquitectura técnica
@@ -127,22 +135,45 @@ thingsboard/
 ### 🔧 "Algo no funciona, ¿cómo debuggeo?"
 
 ```
-1. GUIA_STARTUP_RASPBERRY.md → Solución de Problemas ⭐
-2. RESUMEN_CONFIGURACION.md → Sección troubleshooting
-3. GUIA_DEPLOYMENT_IOT_COMPLETO.md → Sección troubleshooting
-4. Ver logs: ssh innvoid@192.168.4.177 "docker logs ..."
-5. Ver status: ./docker/check-thingsboard-connection.sh
+1. DIAGNOSTICO_RASPBERRY_192.168.4.177.md → Problemas identificados ⭐
+2. GUIA_STARTUP_RASPBERRY.md → Solución de Problemas ⭐
+3. RESUMEN_CONFIGURACION.md → Sección troubleshooting
+4. GUIA_DEPLOYMENT_IOT_COMPLETO.md → Sección troubleshooting
+5. Ver logs: ssh innvoid@192.168.4.177 "docker logs ..."
+6. Ver status: ./docker/check-thingsboard-connection.sh
 ```
 
 ### 🚀 "¿Cómo inicio ThingsBoard en Raspberry Pi?"
 
 ```
-1. GUIA_STARTUP_RASPBERRY.md ⭐ (NUEVA - RECOMENDADA)
+1. GUIA_STARTUP_RASPBERRY.md ⭐ (RECOMENDADA)
    └─ Configuración optimizada para RPi 4 (8GB)
    └─ Pasos detallados con checklist
    └─ Solución a problemas de memoria/swap
 2. Ejecutar checklist de inicio rápido
 3. Verificar con ~/check-thingsboard.sh
+```
+
+### 🌐 "¿Cómo acceder de forma remota a la Raspberry?"
+
+```
+1. DIAGNOSTICO_RASPBERRY_192.168.4.177.md → Fase 2 ⭐
+   └─ Configuración de Tailscale (recomendado)
+   └─ Acceso seguro desde cualquier red
+2. GUIA_ACCESO_REMOTO_SEGURO.md → Comparación de opciones
+3. GUIA_HIBRIDA_TAILSCALE_NGINX.md → Configuración avanzada
+4. Ejecutar: ./docker/optimize-raspberry.sh
+```
+
+### ⚡ "Mi Raspberry está lenta o sin memoria"
+
+```
+1. DIAGNOSTICO_RASPBERRY_192.168.4.177.md ⭐ (NUEVO)
+   └─ Análisis completo del sistema
+   └─ Problemas de RAM identificados
+   └─ Plan de optimización
+2. Ejecutar: ./docker/optimize-raspberry.sh
+3. Seguir recomendaciones del diagnóstico
 ```
 
 ### 💻 "Necesito integrar getmarket-iot"
@@ -169,6 +200,9 @@ thingsboard/
 | ------------------------ | ------------------------------- | --------------------- |
 | ¿Cómo despliego?         | PLAN_EJECUCION.md               | Fase 1                |
 | ¿Cómo inicio en RPi?     | GUIA_STARTUP_RASPBERRY.md ⭐    | Todo                  |
+| ¿Cómo optimizar RPi?     | DIAGNOSTICO_RASPBERRY.md ⭐     | Plan de Optimización  |
+| ¿Acceso remoto seguro?   | DIAGNOSTICO_RASPBERRY.md        | Fase 2                |
+| ¿Por qué mucha RAM?      | DIAGNOSTICO_RASPBERRY.md        | Problema 2            |
 | ¿Error 503?              | GUIA_STARTUP_RASPBERRY.md       | Solución de Problemas |
 | ¿Swap al 100%?           | GUIA_STARTUP_RASPBERRY.md       | Problemas de Memoria  |
 | ¿Cómo registro ESP32?    | PLAN_EJECUCION.md               | Fase 2                |
