@@ -72,7 +72,7 @@ cd /Users/pedrovalenzuela/Documents/Innvoid/Desarrollo/thingsboard/docker
 ./deploy-to-raspberry.sh mi-microservicio development
 ```
 
-### Lo que hace el script:sudo iptables -L INPUT -n -v | grep 1883 && echo -e "\n=== UFW STATUS ===" && sudo ufw status | grep 1883
+### Lo que hace el script:
 
 1. ✅ Verifica conectividad
 2. ✅ Crea estructura de directorios
@@ -137,6 +137,12 @@ QUEUE_ROUTING_RETRIES=60
 QUEUE_ROUTING_RETRY_INTERVAL=10000
 ```
 
+```yaml
+# docker/docker-compose.yml (service kafka)
+environment:
+  KAFKA_HEAP_OPTS: "-Xms256M -Xmx512M"
+```
+
 ### Guardar snapshot para clonar
 
 ```bash
@@ -145,6 +151,46 @@ ssh innvoid@192.168.4.177 "cd ~/docker-projects/thingsboard/docker && \
    cp .env .env.min && \
    cp tb-node.env tb-node.env.min && \
    cp tb-mqtt-transport.env tb-mqtt-transport.env.min"
+```
+
+### Instalacion completa en Raspberry nueva (automatizada)
+
+Ejecuta esto en una Raspberry limpia con Raspberry Pi OS (Debian):
+
+```bash
+sudo apt update && sudo apt upgrade -y
+sudo apt install -y git curl rsync docker.io docker-compose-plugin
+sudo usermod -aG docker $USER
+sudo systemctl enable --now docker
+newgrp docker
+```
+
+En tu Mac, copia el proyecto (solo carpeta docker) a la Raspberry:
+
+```bash
+rsync -av --delete /Users/pedrovalenzuela/Documents/Innvoid/Desarrollo/thingsboard/docker/ \
+   innvoid@192.168.4.177:~/docker-projects/thingsboard/docker/
+```
+
+En la Raspberry, aplica los archivos minimos y levanta servicios:
+
+```bash
+cd ~/docker-projects/thingsboard/docker
+cp docker-compose.yml.min docker-compose.yml
+cp .env.min .env
+cp tb-node.env.min tb-node.env
+cp tb-mqtt-transport.env.min tb-mqtt-transport.env
+
+docker compose up -d postgres zookeeper kafka tb-core1 tb-rule-engine1 \
+   tb-mqtt-transport1 tb-web-ui1 tb-js-executor-1 tb-js-executor-2 \
+   haproxy-certbot portainer
+```
+
+Validacion rapida:
+
+```bash
+docker ps --format "table {{.Names}}\t{{.Status}}" | head -12
+ss -lntp | grep 1883
 ```
 
 ---
